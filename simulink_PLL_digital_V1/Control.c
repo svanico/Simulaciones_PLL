@@ -11,32 +11,91 @@
  *
  *	En este archivo se implementa la funci�n PLL_SdC_function() en la cual debe ser incluida la implementaci�n del PLL.
  *	Entradas:
- * 		Input10V: 0-10V
+ * 		Input10V: 0-10V -- etapa de adecuacion en la placa para sacar offset??
  *	Salidas:
  *		*UserLED / *UserGPIO: 0(0V):OFF-1(3.3V):ON
- *		Output3_3V: 0-3.3V
+ *		Output3_3V: 0-3.3V  --> rango DAC 
 
  */
 
 #include <math.h>
-int Output_Selector=999;
+#define PI 3.14159265358979323846
+int Output_Selector=1;
 
-float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Output3_3V
+float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Output3_3V // HAL function que se ejecuta por cada sample
 	{
-	float Output3_3V=1.65;
-	float InputPM1V, OutputPM1V; // Mapea entrada y salida a +-1V
-	float NumCoefZ1, DenCoefZ1;
-	float OutputZ0;
+	float InputPM1V;  // input
+	float OutputZ0;  // output
+
+	//adecuacion 
+	float OutputPM1V;
 	float OutputSat;
+<<<<<<< Updated upstream
 	static float OutZ1,InpZ1; // "static" evita que los valores se reinicien en cada ejecuci�n
+=======
+	float Output3_3V=1.65;
+
+	// aux variables
+	static float angle;
+
+	static float f_OutZ1,f_InpZ1; // valores pasados lpf
+	static float c_OutZ1,c_InpZ1; // valores pasdos compensador
+	static float i_OutZ1; // valores pasdos integrador
+>>>>>>> Stashed changes
 
 	// Input conditioning
-	InputPM1V = (Input10V/5.0)-1.0;
+	InputPM1V = (Input10V/5.0)-1.0; // normalizo entre 0 y 1 
 
 	// --**--**-- Inicio del c�digo del alumno --**--**--
+<<<<<<< Updated upstream
 	//OutputPM1V=InputPM1V;
 	// --**--**-- Fin del c�digo del alumno    --**--**--
 
+=======
+	// multiplicador
+	float lpf_in = InputPM1V * sin(angle);
+
+	//LPF
+	float lpf_out = (0.0419 * f_InpZ1) + (0.979 * f_OutZ1);
+	//	update
+	f_InpZ1 = InputPM1V;
+	f_OutZ1 = lpf_out;
+
+	//sumador 1
+	float error = - lpf_out -1 ;
+
+	// compensador
+
+	float comp_out = c_OutZ1 + (29.47 * error) - (29.408 * c_InpZ1);
+	// update
+	c_OutZ1 = comp_out;
+	c_InpZ1 = error;
+
+	//sumador 2
+
+	float omega = comp_out + (2*PI*50);
+
+	// integrador
+
+	angle = (0.001 * omega) + i_OutZ1;
+	i_OutZ1 = angle;
+
+	// wrap angle
+
+	if (angle >= 2*PI) 
+	{
+		angle -= 2*PI;
+	}
+	if (angle < 0 ) 
+	{
+		angle += 2*PI;
+	}
+
+	OutputZ0= sin(angle);
+
+	// --**--**-- Fin del c�digo del alumno    --**--**--
+
+>>>>>>> Stashed changes
 	// --**--**-- Inicio del c�digo de ejemplo 1 --**--**--
 	
 		// Matlab 50Hz Low-Pass Filter
@@ -48,11 +107,14 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 				// z - 0.7304
 				// Sampling time: 0.001
 
-			NumCoefZ1=0.2696;
-			DenCoefZ1=0.7304;
-			OutputZ0= NumCoefZ1 * InpZ1 + DenCoefZ1 * OutZ1;
-			OutZ1=OutputZ0;
-			InpZ1=InputPM1V;
+			// NumCoefZ1=0.2696;
+			// DenCoefZ1=0.7304;
+			// OutputZ0= NumCoefZ1 * InpZ1 + DenCoefZ1 * OutZ1;
+			// OutZ1=OutputZ0;
+			// InpZ1=InputPM1V;
+
+	// puede servir 
+
 		// Saturation and Flag
 			
 			*UserGPIO=1;
@@ -75,11 +137,16 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 				OutputPM1V=OutputSat;
 			  break;
 			}
+<<<<<<< Updated upstream
 	
 	// --**--**-- Fin del c�digo de ejemplo 1 --**--**--
+=======
+
+
+>>>>>>> Stashed changes
 
 	// Output conditioning
-	Output3_3V= (OutputPM1V+1.0)*3.3/2.0;
+	Output3_3V= (OutputPM1V+1.0)*3.3/2.0; 
 
 	return(Output3_3V);
 	}
