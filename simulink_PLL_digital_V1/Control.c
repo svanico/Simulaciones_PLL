@@ -4,12 +4,12 @@
  *  Description:
  *  Created:  16/07/2014 NW
  *  Last Mod: 17/10/2016 NW
- *  Author: Cátedra "Sistemas de Control"
- *  		Departamento de Electrónica
- *  		Facultad de Ingeniería
+ *  Author: Cï¿½tedra "Sistemas de Control"
+ *  		Departamento de Electrï¿½nica
+ *  		Facultad de Ingenierï¿½a
  *  		Universidad Nacional de Mar del Plata
  *
- *	En este archivo se implementa la función PLL_SdC_function() en la cual debe ser incluida la implementación del PLL.
+ *	En este archivo se implementa la funciï¿½n PLL_SdC_function() en la cual debe ser incluida la implementaciï¿½n del PLL.
  *	Entradas:
  * 		Input10V: 0-10V
  *	Salidas:
@@ -28,16 +28,16 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 	float NumCoefZ1, DenCoefZ1;
 	float OutputZ0;
 	float OutputSat;
-	static float OutZ1,InpZ1; // "static" evita que los valores se reinicien en cada ejecución
+	static float OutZ1,InpZ1; // "static" evita que los valores se reinicien en cada ejecuciï¿½n
 
 	// Input conditioning
 	InputPM1V = (Input10V/5.0)-1.0;
 
-	// --**--**-- Inicio del código del alumno --**--**--
+	// --**--**-- Inicio del cï¿½digo del alumno --**--**--
 	//OutputPM1V=InputPM1V;
-	// --**--**-- Fin del código del alumno    --**--**--
+	// --**--**-- Fin del cï¿½digo del alumno    --**--**--
 
-	// --**--**-- Inicio del código de ejemplo 1 --**--**--
+	// --**--**-- Inicio del cï¿½digo de ejemplo 1 --**--**--
 	
 		// Matlab 50Hz Low-Pass Filter
 				// >> s=tf('s');
@@ -67,7 +67,7 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 			switch ( Output_Selector ) {
 			case 0:
 				OutputPM1V=InputPM1V;
-			  break;
+			  break;//
 			case 1:
 				OutputPM1V=OutputZ0;
 			  break;
@@ -76,7 +76,7 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 			  break;
 			}
 	
-	// --**--**-- Fin del código de ejemplo 1 --**--**--
+	// --**--**-- Fin del cï¿½digo de ejemplo 1 --**--**--
 
 	// Output conditioning
 	Output3_3V= (OutputPM1V+1.0)*3.3/2.0;
