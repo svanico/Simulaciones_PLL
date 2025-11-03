@@ -30,9 +30,6 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 	//adecuacion 
 	float OutputPM1V;
 	float OutputSat;
-<<<<<<< Updated upstream
-	static float OutZ1,InpZ1; // "static" evita que los valores se reinicien en cada ejecuci�n
-=======
 	float Output3_3V=1.65;
 
 	// aux variables
@@ -41,17 +38,11 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 	static float f_OutZ1,f_InpZ1; // valores pasados lpf
 	static float c_OutZ1,c_InpZ1; // valores pasdos compensador
 	static float i_OutZ1; // valores pasdos integrador
->>>>>>> Stashed changes
 
 	// Input conditioning
 	InputPM1V = (Input10V/5.0)-1.0; // normalizo entre 0 y 1 
 
 	// --**--**-- Inicio del c�digo del alumno --**--**--
-<<<<<<< Updated upstream
-	//OutputPM1V=InputPM1V;
-	// --**--**-- Fin del c�digo del alumno    --**--**--
-
-=======
 	// multiplicador
 	float lpf_in = InputPM1V * sin(angle);
 
@@ -95,7 +86,6 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 
 	// --**--**-- Fin del c�digo del alumno    --**--**--
 
->>>>>>> Stashed changes
 	// --**--**-- Inicio del c�digo de ejemplo 1 --**--**--
 	
 		// Matlab 50Hz Low-Pass Filter
@@ -137,13 +127,8 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 				OutputPM1V=OutputSat;
 			  break;
 			}
-<<<<<<< Updated upstream
 	
 	// --**--**-- Fin del c�digo de ejemplo 1 --**--**--
-=======
-
-
->>>>>>> Stashed changes
 
 	// Output conditioning
 	Output3_3V= (OutputPM1V+1.0)*3.3/2.0; 
