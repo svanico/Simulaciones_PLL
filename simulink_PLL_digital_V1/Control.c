@@ -8,7 +8,7 @@
  *  		Departamento de Electr�nica
  *  		Facultad de Ingenier�a
  *  		Universidad Nacional de Mar del Plata
- *
+ 
  *	En este archivo se implementa la funci�n PLL_SdC_function() en la cual debe ser incluida la implementaci�n del PLL.
  *	Entradas:
  * 		Input10V: 0-10V -- etapa de adecuacion en la placa para sacar offset??
@@ -17,10 +17,15 @@
  *		Output3_3V: 0-3.3V  --> rango DAC 
 
  */
-
 #include <math.h>
 #define PI 3.14159265358979323846
-int Output_Selector=1;
+int Output_Selector=9;
+
+float lpf_in = 0;
+float lpf_out = 0;
+float error = 0;
+float comp_out = 0;
+float omega = 0;
 
 float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Output3_3V // HAL function que se ejecuta por cada sample
 	{
@@ -33,46 +38,45 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 	float Output3_3V=1.65;
 
 	// aux variables
-	static float angle;
+	static float angle = 0;
 
-	static float f_OutZ1,f_InpZ1; // valores pasados lpf
-	static float c_OutZ1,c_InpZ1; // valores pasdos compensador
-	static float i_OutZ1; // valores pasdos integrador
+	static float f_OutZ1,f_InpZ1= 0; // valores pasados lpf
+	static float c_OutZ1,c_InpZ1= 0; // valores pasdos compensador
+	static float i_OutZ1= 0; // valores pasdos integrador
 
 	// Input conditioning
 	InputPM1V = (Input10V/5.0)-1.0; // normalizo entre 0 y 1 
 
 	// --**--**-- Inicio del c�digo del alumno --**--**--
 	// multiplicador
-	float lpf_in = InputPM1V * sin(angle);
+	lpf_in = InputPM1V * sin(angle);
 
 	//LPF
-	float lpf_out = (0.0419 * f_InpZ1) + (0.979 * f_OutZ1);
+	lpf_out = (0.0419 * f_InpZ1) + (0.979 * f_OutZ1);
 	//	update
-	f_InpZ1 = InputPM1V;
+	f_InpZ1 = lpf_in;
 	f_OutZ1 = lpf_out;
 
 	//sumador 1
-	float error = - lpf_out -1 ;
+	error =   0 - lpf_out ;
 
 	// compensador
 
-	float comp_out = c_OutZ1 + (29.47 * error) - (29.408 * c_InpZ1);
+	comp_out = c_OutZ1 + (29.47 * error) - (29.408 * c_InpZ1);
 	// update
 	c_OutZ1 = comp_out;
 	c_InpZ1 = error;
 
 	//sumador 2
 
-	float omega = comp_out + (2*PI*50);
+	omega = comp_out + (2*PI*50);
 
 	// integrador
 
 	angle = (0.001 * omega) + i_OutZ1;
-	i_OutZ1 = angle;
+	
 
 	// wrap angle
-
 	if (angle >= 2*PI) 
 	{
 		angle -= 2*PI;
@@ -82,7 +86,9 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 		angle += 2*PI;
 	}
 
-	OutputZ0= sin(angle);
+	i_OutZ1 = angle;
+
+	OutputZ0 = sin(angle);
 
 	// --**--**-- Fin del c�digo del alumno    --**--**--
 
@@ -118,7 +124,7 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 		// Output Selector
 			switch ( Output_Selector ) {
 			case 0:
-				OutputPM1V=InputPM1V;
+				OutputPM1V=angle;
 			  break;//
 			case 1:
 				OutputPM1V=OutputZ0;
@@ -129,9 +135,10 @@ float PLL_SdC_function(float Input10V, int *UserLED, int *UserGPIO) // return Ou
 			}
 	
 	// --**--**-- Fin del c�digo de ejemplo 1 --**--**--
-
+ 
 	// Output conditioning
-	Output3_3V= (OutputPM1V+1.0)*3.3/2.0; 
+	//Output3_3V= (OutputPM1V+1.0)*3.3/2.0; 
+	Output3_3V= error;
 
 	return(Output3_3V);
 	}
