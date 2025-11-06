@@ -1,4 +1,7 @@
 %%Parametros PLL
+%Comparador
+Ts=50e-6;
+
 %Señal de entrada
 fi=50;
 wi=2*pi*50;
@@ -16,5 +19,7 @@ Cf=1e-6;
 Kvco=(2*N*wi)/VDD;
 Rvco=100e3;
 Cvco=5e-9;
+
+
 
 
