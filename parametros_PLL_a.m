@@ -17,7 +17,7 @@ R2=200e3;
 Cf=1e-6;
 
 %VCO
-Kvco=(2*N*wi)/VDD;
+Kvco=(2*N*fi)/VDD;
 Rvco=100e3;
 Cvco=5e-9;
 
