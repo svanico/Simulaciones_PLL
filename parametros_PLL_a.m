@@ -8,7 +8,7 @@ fi=50;
 wi=2*pi*50;
 VDD=10;
 
-%Divisor
+%Divisorwi
 N=32;
 
 %LPF
@@ -17,7 +17,8 @@ R2=200e3;
 Cf=1e-6;
 
 %VCO
-Kvco=(2*N*fi)/VDD;
+Kvco= (2*N*fi)/VDD;
+Kvco_l = (2*N*wi)/VDD
 Rvco=100e3;
 Cvco=5e-9;
 
